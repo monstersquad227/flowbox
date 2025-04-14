@@ -1,0 +1,83 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.17.2
+  name: flowboxes.devflow.flowbox.io
+spec:
+  group: devflow.flowbox.io
+  names:
+    kind: FlowBox
+    listKind: FlowBoxList
+    plural: flowboxes
+    singular: flowbox
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: FlowBox is the Schema for the flowboxes API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: FlowBoxSpec defines the desired state of FlowBox.
+            properties:
+              healthProbe:
+                description: 健康检查
+                type: boolean
+              image:
+                description: 应用镜像
+                type: string
+              ingress:
+                description: Ingress 配置
+                properties:
+                  domain:
+                    description: 域名配置
+                    type: string
+                  enabled:
+                    description: 是否启用 Ingress
+                    type: boolean
+                  name:
+                    description: Ingress 的名称（可以自动生成时不写）
+                    type: string
+                type: object
+              name:
+                description: |-
+                  Foo is an example field of FlowBox. Edit flowbox_types.go to remove/update
+                  Foo string `json:"foo,omitempty"`
+                  应用名称
+                type: string
+              port:
+                description: 应用端口
+                format: int32
+                type: integer
+              replicaCount:
+                description: 副本数
+                format: int32
+                type: integer
+            type: object
+          status:
+            description: FlowBoxStatus defines the observed state of FlowBox.
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

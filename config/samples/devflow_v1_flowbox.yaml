@@ -1,0 +1,19 @@
+apiVersion: devflow.flowbox.io/v1
+kind: FlowBox
+metadata:
+    labels:
+        app.kubernetes.io/name: flowbox
+        app.kubernetes.io/managed-by: kustomize
+    name: flowbox-sample
+spec:
+    # TODO(user): Add fields here
+    name: demo
+    port: 80
+    image: harbor.chengduoduo.com/base/nginx:demo
+    replicaCount: 1
+    healthProbe: false
+    ingress:
+        enabled: true
+        name: demo
+        domain: demo.domain.com
+
