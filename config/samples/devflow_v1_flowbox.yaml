@@ -4,16 +4,23 @@ metadata:
     labels:
         app.kubernetes.io/name: flowbox
         app.kubernetes.io/managed-by: kustomize
-    name: flowbox-sample
+    name: demo
+    namespace: flowbox-system
 spec:
     # TODO(user): Add fields here
-    name: demo
     port: 80
     image: harbor.chengduoduo.com/base/nginx:demo
-    replicaCount: 1
-    healthProbe: false
+    replicas: 1
+    probe: false
+    resource:
+        enabled: false
+    hpa:
+        enabled: true
+        min: 1
+        max: 3
+        cpuQuantity: 80
+        memoryQuantity: 60
     ingress:
         enabled: true
-        name: demo
         domain: demo.domain.com
 

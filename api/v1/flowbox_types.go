@@ -1,60 +1,66 @@
-/*
-Copyright 2025.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package v1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // FlowBoxSpec defines the desired state of FlowBox.
 type FlowBoxSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of FlowBox. Edit flowbox_types.go to remove/update
-	//Foo string `json:"foo,omitempty"`
-	// 应用名称
-	Name string `json:"name,omitempty"`
-
-	// 应用端口
+	// flowbox 应用端口
 	Port int32 `json:"port,omitempty"`
 
-	// 应用镜像
+	// flowbox 应用镜像
 	Image string `json:"image,omitempty"`
 
-	// 副本数
-	ReplicaCount int32 `json:"replicaCount,omitempty"`
+	// flowbox pod 副本数
+	Replicas int32 `json:"replicas,omitempty"`
 
-	// 健康检查
-	HealthProbe bool `json:"healthProbe,omitempty"`
+	// flowbox 应用健康检查是否开启，默认uri /<flowbox_name>/actuator/health
+	Probe bool `json:"probe,omitempty"`
+
+	HPA HpaSpec `json:"hpa,omitempty"`
+
+	// flowbox 应用资源限制开关
+	Resource ResourceSpec `json:"resource,omitempty"`
 
 	// Ingress 配置
-	FlowBoxIngressSpec FlowBoxIngress `json:"ingress,omitempty"`
+	Ingress IngressSpec `json:"ingress,omitempty"`
 }
 
-type FlowBoxIngress struct {
-	// 是否启用 Ingress
+type HpaSpec struct {
+	// 是否开启HPA
 	Enabled bool `json:"enabled,omitempty"`
 
-	// Ingress 的名称（可以自动生成时不写）
-	Name string `json:"name,omitempty"`
+	// 最小数
+	Min int32 `json:"min,omitempty"`
+
+	// 最大数
+	Max int32 `json:"max,omitempty"`
+
+	// CPU 阀值
+	CpuQuantity int32 `json:"cpuQuantity,omitempty"`
+
+	// Memory 阀值
+	MemoryQuantity int32 `json:"memoryQuantity,omitempty"`
+}
+
+type ResourceSpec struct {
+	// 是否开启资源限制
+	Enabled bool `json:"enabled,omitempty"`
+
+	// CPU 单位 m; 1C=1000m
+	CPU int `json:"cpu,omitempty"`
+
+	// Memory 单位 Mi; 1G = 1024Mi
+	Memory int `json:"memory,omitempty"`
+}
+
+type IngressSpec struct {
+	// 是否启用 Ingress
+	Enabled bool `json:"enabled,omitempty"`
 
 	// 域名配置
 	Domain string `json:"domain,omitempty"`

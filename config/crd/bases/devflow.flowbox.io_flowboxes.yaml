@@ -39,11 +39,30 @@ spec:
           spec:
             description: FlowBoxSpec defines the desired state of FlowBox.
             properties:
-              healthProbe:
-                description: 健康检查
-                type: boolean
+              hpa:
+                properties:
+                  cpuQuantity:
+                    description: CPU 阀值
+                    format: int32
+                    type: integer
+                  enabled:
+                    description: 是否开启HPA
+                    type: boolean
+                  max:
+                    description: 最大数
+                    format: int32
+                    type: integer
+                  memoryQuantity:
+                    description: Memory 阀值
+                    format: int32
+                    type: integer
+                  min:
+                    description: 最小数
+                    format: int32
+                    type: integer
+                type: object
               image:
-                description: 应用镜像
+                description: flowbox 应用镜像
                 type: string
               ingress:
                 description: Ingress 配置
@@ -54,24 +73,31 @@ spec:
                   enabled:
                     description: 是否启用 Ingress
                     type: boolean
-                  name:
-                    description: Ingress 的名称（可以自动生成时不写）
-                    type: string
                 type: object
-              name:
-                description: |-
-                  Foo is an example field of FlowBox. Edit flowbox_types.go to remove/update
-                  Foo string `json:"foo,omitempty"`
-                  应用名称
-                type: string
               port:
-                description: 应用端口
+                description: flowbox 应用端口
                 format: int32
                 type: integer
-              replicaCount:
-                description: 副本数
+              probe:
+                description: flowbox 应用健康检查是否开启，默认uri /<flowbox_name>/actuator/health
+                type: boolean
+              replicas:
+                description: flowbox pod 副本数
                 format: int32
                 type: integer
+              resource:
+                description: flowbox 应用资源限制开关
+                properties:
+                  cpu:
+                    description: CPU 单位 m; 1C=1000m
+                    type: integer
+                  enabled:
+                    description: 是否开启资源限制
+                    type: boolean
+                  memory:
+                    description: Memory 单位 Mi; 1G = 1024Mi
+                    type: integer
+                type: object
             type: object
           status:
             description: FlowBoxStatus defines the observed state of FlowBox.
