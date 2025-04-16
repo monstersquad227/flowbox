@@ -22,5 +22,5 @@ spec:
         memoryQuantity: 60
     ingress:
         enabled: true
-        domain: demo.domain.com
+        domain: nginx.domain.com
 

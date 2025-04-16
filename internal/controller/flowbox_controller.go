@@ -256,8 +256,7 @@ func ingressCreateSpec(flowbox *devflowv1.FlowBox) *networkingv1beta1.Ingress {
 						HTTP: &networkingv1beta1.HTTPIngressRuleValue{
 							Paths: []networkingv1beta1.HTTPIngressPath{
 								{
-									Path:     "/",
-									PathType: func() *networkingv1beta1.PathType { pt := networkingv1beta1.PathTypePrefix; return &pt }(),
+									Path: "/",
 									Backend: networkingv1beta1.IngressBackend{
 										ServiceName: flowbox.Name,
 										ServicePort: intstr.FromInt(int(flowbox.Spec.Port)),
