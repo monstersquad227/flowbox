@@ -1,135 +1,43 @@
 # flowbox
-// TODO(user): Add simple overview of use/purpose
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+> Tips
+> 
+> 1. 此项目基于Mac OS系统开发，M芯片，如果在Linux上是会报错的，需要更换项目 bin/ 文件夹中的内容
+> 2. 此项目基于 Kubernetes v1.18.6 版本开发，如果 api 版本不一致则不会创建相应的资源
 
-## Getting Started
+| 工具          | 版本     |
+|-------------|--------|
+| go          | 1.23最低 |
+| kubebuilder | latest |
+| docker      | latest |
 
-### Prerequisites
-- go version v1.23.0+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
-
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
-
-```sh
-make docker-build docker-push IMG=<some-registry>/flowbox:tag
+```bash
+# 初始化项目
+mkdir flowbox && cd flowbox
+go mod init flowbox
+kubebuilder init --domain flowbox.io
+# y 回车
+kubebuilder create api --group devflow --version v1 --kind FlowBox
 ```
 
-**NOTE:** This image ought to be published in the personal registry you specified.
-And it is required to have access to pull the image from the working environment.
-Make sure you have the proper permission to the registry if the above commands don’t work.
+## 部署项目
 
-**Install the CRDs into the cluster:**
+将写好的 `internal/controller/flowbox_controller.go` 代码和 `api/v1/flowbox_types.go` 保存好
 
-```sh
-make install
+```bash
+make manifests 
+# 会将 controller 中的注解生成对应的 config/rbac/role.yaml
+make docker-build docker-push IMG=harbor.xxx.com/base/flowbox:v1
+# 会生成相应的镜像，并推送镜像仓库
+make install 
+# 会创建对应的资源
+make deploy IMG=harbor.xxx.com/base/flowbox:v1
+# 会部署该镜像
 ```
+> Tips:
+> 
+> make 对应指令查看 Makefile
 
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
+## 后续
 
-```sh
-make deploy IMG=<some-registry>/flowbox:tag
-```
-
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
-privileges or be logged in as admin.
-
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
-
-```sh
-kubectl apply -k config/samples/
-```
-
->**NOTE**: Ensure that the samples has default values to test it out.
-
-### To Uninstall
-**Delete the instances (CRs) from the cluster:**
-
-```sh
-kubectl delete -k config/samples/
-```
-
-**Delete the APIs(CRDs) from the cluster:**
-
-```sh
-make uninstall
-```
-
-**UnDeploy the controller from the cluster:**
-
-```sh
-make undeploy
-```
-
-## Project Distribution
-
-Following the options to release and provide this solution to the users.
-
-### By providing a bundle with all YAML files
-
-1. Build the installer for the image built and published in the registry:
-
-```sh
-make build-installer IMG=<some-registry>/flowbox:tag
-```
-
-**NOTE:** The makefile target mentioned above generates an 'install.yaml'
-file in the dist directory. This file contains all the resources built
-with Kustomize, which are necessary to install this project without its
-dependencies.
-
-2. Using the installer
-
-Users can just run 'kubectl apply -f <URL for YAML BUNDLE>' to install
-the project, i.e.:
-
-```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/flowbox/<tag or branch>/dist/install.yaml
-```
-
-### By providing a Helm Chart
-
-1. Build the chart using the optional helm plugin
-
-```sh
-kubebuilder edit --plugins=helm/v1-alpha
-```
-
-2. See that a chart was generated under 'dist/chart', and users
-can obtain this solution from there.
-
-**NOTE:** If you change the project, you need to update the Helm Chart
-using the same command above to sync the latest changes. Furthermore,
-if you create webhooks, you need to use the above command with
-the '--force' flag and manually ensure that any custom configuration
-previously added to 'dist/chart/values.yaml' or 'dist/chart/manager/manager.yaml'
-is manually re-applied afterwards.
-
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
-
-**NOTE:** Run `make help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
-
-## License
-
-Copyright 2025.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
+添加 webhook，flowbox创建的资源不允许原生删除，只用通过flowbox删除和更新
